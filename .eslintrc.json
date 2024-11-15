@@ -15,6 +15,13 @@
                 "allowForLoopAfterthoughts": true
             }
         ],
-        "no-underscore-dangle": "off"
+        "lines-between-class-members": [
+            "error",
+            {
+                "enforce": [
+                    { "blankLine": "never", "prev": "field", "next": "field" }
+                ]
+            }
+        ]
     }
 }
