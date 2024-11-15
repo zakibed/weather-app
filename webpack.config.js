@@ -12,7 +12,7 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         clean: true
     },
-    devtool: 'eval-source-map',
+    devtool: devMode ? 'eval-source-map' : false,
     devServer: {
         hot: false
     },
@@ -49,7 +49,8 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Weather App',
-            template: 'src/template.html'
+            template: 'src/template.html',
+            favicon: 'src/assets/images/favicon.ico'
         })
     ].concat(
         devMode
@@ -62,5 +63,8 @@ module.exports = {
     ),
     optimization: {
         minimizer: ['...', new CssMinimizerPlugin()]
+    },
+    performance: {
+        maxAssetSize: 500000
     }
 };
