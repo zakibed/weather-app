@@ -2,7 +2,7 @@
 
 A web app that displays current and forecast weather data.
 
-Demo: https://ikaz1.github.io/weather-app/
+Demo: https://zakibed.github.io/weather-app/
 
 ## Features
 
