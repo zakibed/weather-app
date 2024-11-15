@@ -1,5 +1,5 @@
-import API from './API';
-import Display from './Display';
+import API from './API.js';
+import Display from './Display.js';
 
 export default class App {
     #location;

@@ -4,7 +4,7 @@ import {
     WEATHER_MAPPINGS,
     AIR_QUALITY_INDEX,
     DEFAULT_LOCATIONS
-} from './data/constants';
+} from './data/constants.js';
 
 export default class API {
     static #KEY = WEATHERAPI_KEY;
