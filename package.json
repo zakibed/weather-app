@@ -1,13 +1,10 @@
 {
     "name": "weather-app",
     "version": "1.0.0",
-    "description": "",
-    "private": true,
+    "type": "module",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "webpack --node-env production",
-        "build:dev": "webpack --node-env development",
-        "serve": "webpack serve --node-env development --open",
+        "build": "webpack --mode=production",
+        "dev": "webpack serve --open --mode=development",
         "deploy": "git subtree push --prefix dist origin gh-pages"
     },
     "keywords": [],
