@@ -15,14 +15,6 @@
                 "allowForLoopAfterthoughts": true
             }
         ],
-        "lines-between-class-members": [
-            "error",
-            {
-                "enforce": [
-                    { "blankLine": "never", "prev": "field", "next": "field" }
-                ]
-            }
-        ],
         "func-names": "off",
         "import/extensions": ["error", "always"]
     }
