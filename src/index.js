@@ -1,4 +1,4 @@
 import './assets/css/main.css';
-import App from './App.js';
+import init from './app.js';
 
-new App().init();
+init();
