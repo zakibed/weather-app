@@ -1,6 +1,5 @@
-export default class Display {
-    static #updateCurrentWeather({ name, country }, current) {
-        document.querySelector('.current-weather-card').innerHTML = `
+function updateCurrentWeather({ name, country }, current) {
+    document.querySelector('.current-weather-card').innerHTML = `
             <section class="main-info">
                 <header>
                     <h1 class="location">
@@ -69,7 +68,7 @@ export default class Display {
             </section>
         `;
 
-        document.querySelector('.additional-details-card').innerHTML = `
+    document.querySelector('.additional-details-card').innerHTML = `
             <h2>Additional Details</h2>
 
             <div class="weather-detail">
@@ -100,13 +99,13 @@ export default class Display {
                 </p>
             </div>
         `;
-    }
+}
 
-    static #updateDayForecast(forecast) {
-        let html = '';
+function updateDayForecast(forecast) {
+    let html = '';
 
-        forecast.forEach((hour) => {
-            html += `
+    forecast.forEach((hour) => {
+        html += `
                 <div class="forecast-hour">
                     <p class="hour">${hour.time}</p>
                     <i class="wi ${hour.condition_icon} wi-fw"></i>
@@ -120,16 +119,16 @@ export default class Display {
                     </p>
                 </div>
             `;
-        });
+    });
 
-        document.querySelector('.forecast-hours').innerHTML = html;
-    }
+    document.querySelector('.forecast-hours').innerHTML = html;
+}
 
-    static #updateWeekForecast(forecast) {
-        let html = '';
+function updateWeekForecast(forecast) {
+    let html = '';
 
-        forecast.forEach((day) => {
-            html += `
+    forecast.forEach((day) => {
+        html += `
                 <div class="forecast-day">
                     <h3 class="day-of-week">${day.day}</h3>
 
@@ -158,41 +157,41 @@ export default class Display {
                     </div>
                 </div>  
             `;
-        });
+    });
 
-        document.querySelector('.forecast-days').innerHTML = html;
-    }
+    document.querySelector('.forecast-days').innerHTML = html;
+}
 
-    static showSearchResults(data) {
-        const input = document.querySelector('.search-bar input');
-        const card = document.querySelector('.search-results-card');
-        const container = document.querySelector('.search-results');
+export function showSearchResults(data) {
+    const input = document.querySelector('.search-bar input');
+    const card = document.querySelector('.search-results-card');
+    const container = document.querySelector('.search-results');
 
-        if (data === null) {
-            input.dataset.name = '';
-            input.dataset.lat = '';
-            input.dataset.lon = '';
+    if (data === null) {
+        input.dataset.name = '';
+        input.dataset.lat = '';
+        input.dataset.lon = '';
 
-            if (input.value.length < 1) {
-                card.classList.add('hidden');
-            } else {
-                card.classList.remove('hidden');
-                container.innerHTML = `<p class="search-result error">No location found.</p>`;
-            }
-
-            return;
+        if (input.value.length < 1) {
+            card.classList.add('hidden');
+        } else {
+            card.classList.remove('hidden');
+            container.innerHTML = `<p class="search-result error">No location found.</p>`;
         }
 
-        let html = '';
+        return;
+    }
 
-        data.forEach(({ name, region, country, lat, lon }, index) => {
-            if (index === 0) {
-                input.dataset.name = `${name}, ${region}, ${country}`;
-                input.dataset.lat = lat;
-                input.dataset.lon = lon;
-            }
+    let html = '';
 
-            html += `
+    data.forEach(({ name, region, country, lat, lon }, index) => {
+        if (index === 0) {
+            input.dataset.name = `${name}, ${region}, ${country}`;
+            input.dataset.lat = lat;
+            input.dataset.lon = lon;
+        }
+
+        html += `
                 <p
                     class="search-result"
                     data-name="${name}, ${region}, ${country}"
@@ -203,47 +202,46 @@ export default class Display {
                     <span class="country">${country}</span>
                 </p>
             `;
-        });
+    });
 
-        card.classList.remove('hidden');
-        container.innerHTML = html;
-    }
+    card.classList.remove('hidden');
+    container.innerHTML = html;
+}
 
-    static getSearchResult(element) {
-        const input = document.querySelector('.search-bar input');
+export function selectSearchResult(element) {
+    const input = document.querySelector('.search-bar input');
 
-        Object.keys(element.dataset).forEach((key) => {
-            input.dataset[key] = element.dataset[key];
-        });
-        input.value = element.dataset.name;
-    }
+    Object.keys(element.dataset).forEach((key) => {
+        input.dataset[key] = element.dataset[key];
+    });
+    input.value = element.dataset.name;
+}
 
-    static updateSettings(settings) {
-        const classList = [];
+export function toggleLoader(bool) {
+    document.querySelector('.loader').classList.toggle('hidden', !bool);
+}
 
-        Object.values(settings).forEach((value) => {
-            document.querySelector(`input[value='${value}']`).checked = true;
-            classList.push(`unit-${value}`);
-        });
+export function toggleDropdown(bool) {
+    document.querySelector('.dropdown').classList.toggle('hidden', !bool);
+    document.querySelector('.overlay').classList.toggle('hidden', !bool);
+}
 
-        document.documentElement.className = classList.join(' ');
-    }
+export function updateSettings(settings) {
+    const classList = [];
 
-    static toggleLoader(bool) {
-        document.querySelector('.loader').classList.toggle('hidden', !bool);
-    }
+    Object.values(settings).forEach((value) => {
+        document.querySelector(`input[value='${value}']`).checked = true;
+        classList.push(`unit-${value}`);
+    });
 
-    static toggleDropdown(bool) {
-        document.querySelector('.dropdown').classList.toggle('hidden', !bool);
-        document.querySelector('.overlay').classList.toggle('hidden', !bool);
-    }
+    document.documentElement.className = classList.join(' ');
+}
 
-    static updateWeather(data) {
-        document.querySelector('.search-bar input').value = '';
-        document.querySelector('.search-results-card').classList.add('hidden');
+export function updateDisplay(data) {
+    document.querySelector('.search-bar input').value = '';
+    document.querySelector('.search-results-card').classList.add('hidden');
 
-        this.#updateCurrentWeather(data.location, data.current);
-        this.#updateDayForecast(data.day_forecast);
-        this.#updateWeekForecast(data.week_forecast);
-    }
+    updateCurrentWeather(data.location, data.current);
+    updateDayForecast(data.day_forecast);
+    updateWeekForecast(data.week_forecast);
 }
