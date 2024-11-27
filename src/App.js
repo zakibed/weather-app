@@ -1,74 +1,80 @@
-import API from './API.js';
-import Display from './Display.js';
+import {
+    fetchWeather,
+    fetchSearchResults,
+    getUserSettings,
+    getUserLocation
+} from './weather.js';
+import {
+    updateDisplay,
+    updateSettings,
+    toggleLoader,
+    toggleDropdown,
+    selectSearchResult,
+    showSearchResults
+} from './display.js';
 
-export default class App {
-    #location;
-    #settings;
+async function updateWeather(location) {
+    toggleLoader(true);
 
-    async #updateWeather() {
-        Display.toggleLoader(true);
+    const data = await fetchWeather(location);
 
-        const data = await API.fetchWeather(this.#location);
+    if (data === null) return;
 
-        if (data === null) return;
+    updateDisplay(data);
+    toggleLoader(false);
+}
 
-        Display.updateWeather(data);
-        Display.toggleLoader(false);
-    }
+export default async function init() {
+    const searchForm = document.querySelector('.search-bar');
+    const searchInput = document.querySelector('.search-bar input');
+    const searchResults = document.querySelector('.search-results');
+    const settingsBtn = document.querySelector('.btn-open-settings');
+    const settingsDropdown = document.querySelector('.settings .dropdown');
+    const overlay = document.querySelector('.overlay');
 
-    async init() {
-        this.#location = await API.getUserLocation();
-        this.#settings = API.getUserSettings();
+    searchInput.addEventListener('input', async () => {
+        const data = await fetchSearchResults(searchInput.value);
 
-        this.#updateWeather();
-        Display.updateSettings(this.#settings);
+        showSearchResults(data);
+    });
 
-        const searchForm = document.querySelector('.search-bar');
-        const searchInput = document.querySelector('.search-bar input');
-        const searchResults = document.querySelector('.search-results');
-        const settingsBtn = document.querySelector('.btn-open-settings');
-        const settingsDropdown = document.querySelector('.settings .dropdown');
-        const overlay = document.querySelector('.overlay');
+    searchResults.addEventListener('click', ({ target }) => {
+        if (!target.matches('.search-result')) return;
 
-        searchInput.addEventListener('input', async () => {
-            const data = await API.fetchSearchResults(searchInput.value);
+        selectSearchResult(target);
+    });
 
-            Display.showSearchResults(data);
-        });
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-        searchResults.addEventListener('click', ({ target }) => {
-            if (!target.matches('.search-result')) return;
+        if (searchInput.dataset.name === '') return;
 
-            Display.getSearchResult(target);
-        });
+        const newLocation = { ...searchInput.dataset };
 
-        searchForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        localStorage.setItem('location', JSON.stringify(newLocation));
+        updateWeather(newLocation);
+    });
 
-            if (searchInput.dataset.name === '') return;
+    settingsBtn.addEventListener('click', () => {
+        toggleDropdown(true);
+    });
 
-            this.#location = { ...searchInput.dataset };
+    overlay.addEventListener('click', () => {
+        toggleDropdown(false);
+    });
 
-            localStorage.setItem('location', JSON.stringify(this.#location));
-            this.#updateWeather();
-        });
+    settingsDropdown.addEventListener('change', () => {
+        const newSettings = {};
 
-        settingsBtn.addEventListener('click', () => {
-            Display.toggleDropdown(true);
-        });
+        document
+            .querySelectorAll('.settings input:checked')
+            .forEach((input) => {
+                newSettings[`${input.name}Unit`] = input.value;
+            });
+        localStorage.setItem('settings', JSON.stringify(newSettings));
+        updateSettings(newSettings);
+    });
 
-        overlay.addEventListener('click', () => {
-            Display.toggleDropdown(false);
-        });
-
-        settingsDropdown.addEventListener('change', () => {
-            document
-                .querySelectorAll('.settings input:checked')
-                .forEach((input) => {
-                    this.#settings[`${input.name}Unit`] = input.value;
-                });
-            localStorage.setItem('settings', JSON.stringify(this.#settings));
-            Display.updateSettings(this.#settings);
-        });
-    }
+    updateWeather(await getUserLocation());
+    updateSettings(getUserSettings());
 }
